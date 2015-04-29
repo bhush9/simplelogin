@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.8)
 
 project(SSSSDDDDDMMMM)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake;${CMAKE_MODULE_PATH}")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR};${CMAKE_MODULE_PATH}")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
@@ -15,7 +15,7 @@ endif()
 find_package(Qt5Core REQUIRED)
 find_package(Qt5DBus REQUIRED)
 
-find_package(PAM)
+find_package(PAM REQUIRED)
 add_definitions(-DUSE_PAM)
 
 
@@ -28,11 +28,9 @@ include_directories(
 include_directories("${CMAKE_BINARY_DIR}/src/common")
 
 set(HELPER_SOURCES
-    Backend.cpp
     HelperApp.cpp
     UserSession.cpp
     backend/PamHandle.cpp
-    backend/PamBackend.cpp
 )
 
 add_executable(sddm-helper ${HELPER_SOURCES})

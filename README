@@ -4,8 +4,17 @@ usage
 
 simplelogin --user USERNAME --exec FULLPATHTOEXEC
 
-it has been bastardised from SDDM
-
 super simple sans display display desktop manager mockup mitigating mir
 
 or sssdddmmmm for short.
+
+
+
+
+Note
+this file expects sddm-autologin in /etc/pam.d/
+Use the ubuntu one, not the one from the repo. Ubuntu have a messed up system
+
+renaming the lightdm one should be fine too
+
+exec line can only be one string due to shoddy parsing, if you need to pass args, just go via a shell script or modify the code

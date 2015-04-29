@@ -18,7 +18,7 @@
  *
  */
 #include "PamHandle.h"
-#include "PamBackend.h"
+// #include "PamBackend.h"
 
 #include <QtCore/QDebug>
 
@@ -133,9 +133,9 @@ namespace SDDM {
     }
 
     int PamHandle::converse(int n, const struct pam_message **msg, struct pam_response **resp, void *data) {
-        qDebug() << "[PAM] Preparing to converse...";
-        PamBackend *c = static_cast<PamBackend *>(data);
-        return c->converse(n, msg, resp);
+        qDebug() << "Dave assumed this wasn't needed and just removed a crucial bit of code. If you this it means that he was wrong (or you're using a stupid session which isn't autologin)";
+//         PamBackend *c = static_cast<PamBackend *>(data);
+//         return c->converse(n, msg, resp);
     }
 
     bool PamHandle::start(const QString &service, const QString &user) {

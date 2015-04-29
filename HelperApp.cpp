@@ -19,13 +19,13 @@
  */
 
 #include "HelperApp.h"
-#include "Backend.h"
 #include "UserSession.h"
+
+#include "backend/PamHandle.h"
 
 #include <QtCore/QTimer>
 #include <QtCore/QFile>
 #include <QtCore/QDebug>
-#include <QtNetwork/QLocalSocket>
 
 #include <iostream>
 #include <unistd.h>
@@ -34,110 +34,70 @@
 namespace SDDM {
     HelperApp::HelperApp(int& argc, char** argv)
             : QCoreApplication(argc, argv)
-            , m_backend(Backend::get(this))
             , m_session(new UserSession(this))
-    {
-        m_backend->setAutologin(true);
-        setUp());
-    }
-
-    void HelperApp::setUp() {
+    {        
         QStringList args = QCoreApplication::arguments();
-        QString server;
         int pos;
+        
 
-
-        if ((pos = args.indexOf("--id")) >= 0) {
+        if ((pos = args.indexOf("--exec")) >= 0) {
             if (pos >= args.length() - 1) {
-                qCritical() << "This application is not supposed to be executed manually";
-                exit(Auth::HELPER_OTHER_ERROR);
-                return;
-            }
-            m_id = QString(args[pos + 1]).toLongLong();
-        }
-
-        if ((pos = args.indexOf("--start")) >= 0) {
-            if (pos >= args.length() - 1) {
-                qCritical() << "This application is not supposed to be executed manually";
-                exit(Auth::HELPER_OTHER_ERROR);
-                return;
+                exit(-1);
             }
             m_session->setPath(args[pos + 1]);
         }
 
         if ((pos = args.indexOf("--user")) >= 0) {
             if (pos >= args.length() - 1) {
-                qCritical() << "This application is not supposed to be executed manually";
-                exit(Auth::HELPER_OTHER_ERROR);
-                return;
+                exit(-1);
             }
             m_user = args[pos + 1];
         }
+        
+        if (m_session->path().isEmpty() || m_user.isEmpty()) 
+            qFatal("pass some args please");
+        
+        PamHandle *pamHandle = new PamHandle; //TODO fix leak
+        
+        if (! pamHandle->start("sddm-autologin" /*PAM session*/, m_user)) //Martin check this exists
+            qFatal("Could not start PAM");
+        
+        if (!pamHandle->authenticate())
+            qFatal("Could not auth");
 
-
-        doAuth();
-        connect(m_session, SIGNAL(finished(int)), this, SLOT(sessionFinished(int)));
-        m_socket->connectToServer(server, QIODevice::ReadWrite | QIODevice::Unbuffered);
-    }
-
-    void HelperApp::doAuth() {
-        SafeDataStream str(m_socket);
-        str << Msg::HELLO << m_id;
-        str.send();
-        if (str.status() != QDataStream::Ok)
-            qCritical() << "Couldn't write initial message:" << str.status();
-
-        if (!m_backend->start(m_user)) {
-            authenticated(QString(""));
-            exit(Auth::HELPER_AUTH_ERROR);
-            return;
-        }
-
-        if (!m_backend->authenticate()) {
-            authenticated(QString(""));
-            exit(Auth::HELPER_AUTH_ERROR);
-            return;
-        }
-
-        m_user = m_backend->userName();
-        QProcessEnvironment env = authenticated(m_user);
-
-        if (!m_session->path().isEmpty()) {
-            env.insert(m_session->processEnvironment());
-            m_session->setProcessEnvironment(env);
-
-            if (!m_backend->openSession()) {
-                sessionOpened(false);
-                exit(Auth::HELPER_SESSION_ERROR);
-                return;
-            }
-
-            sessionOpened(true);
-        }
-        else
-            exit(Auth::HELPER_SUCCESS);
-        return;
+        QProcessEnvironment sessionEnv = m_session->processEnvironment();
+        
+//         pamHandle->setItem(PAM_XDISPLAY, qPrintable(display)); //Martin maybe change these, see that page on 
+//         pamHandle->setItem(PAM_TTY, qPrintable(display));
+        
+        //DAVE - old code shoved a tonne of other stuff into the env, but was marked as "is this needed?".
+        //see SDDM backend.cpp
+        //I guess we'll find out :)
+        
+        pamHandle->putEnv(sessionEnv);
+        
+        if (!pamHandle->openSession())
+            qFatal("Could not open pam session");
+        
+        qDebug() << "startng process";
+        
+        connect(m_session, SIGNAL(finished(int)), SLOT(sessionFinished(int)));
+        
+        sessionEnv.insert(pamHandle->getEnv());
+        m_session->setProcessEnvironment(sessionEnv);
+        m_session->start();
+        
     }
 
     void HelperApp::sessionFinished(int status) {
         exit(status);
     }
-
-    QProcessEnvironment HelperApp::authenticated(const QString &user) {
-       qDebug() << "authenticated";
-    }
-
-    void HelperApp::sessionOpened(bool success) {
-        qDebug() << "yay, session opened";
-    }
-
-    UserSession *HelperApp::session() {
-        return m_session;
-    }
-
-    const QString& HelperApp::user() const {
+    
+    const QString& HelperApp::user() const
+    {
         return m_user;
     }
+
 
     HelperApp::~HelperApp() {
 

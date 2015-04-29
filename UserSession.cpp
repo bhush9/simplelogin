@@ -18,9 +18,10 @@
  *
  */
 
-#include "Configuration.h"
 #include "UserSession.h"
 #include "HelperApp.h"
+
+#include <QDebug>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -39,16 +40,11 @@ namespace SDDM {
     }
 
     bool UserSession::start() {
-        QProcessEnvironment env = qobject_cast<HelperApp*>(parent())->session()->processEnvironment();
-
-        if (env.value("XDG_SESSION_CLASS") == "greeter")
-            QProcess::start(m_path);
-        else {
-            qDebug() << "Starting:" << mainConfig.XDisplay.SessionCommand.get()
-                     << m_path;
-            QProcess::start(mainConfig.XDisplay.SessionCommand.get(),
-                            QStringList() << m_path);
-        }
+        //NOTE FOR DAVE GO BACK AND FIX THIS IN SDDM, DON'T WAIT FOR STARTED IN HERE. IT'S WEIRD
+        
+        qDebug() << "starting "<< m_path;
+        
+        QProcess::start(m_path);
 
         return waitForStarted();
     }
@@ -61,32 +57,36 @@ namespace SDDM {
         return m_path;
     }
 
-    void UserSession::setupChildProcess() {
+    void UserSession::setupChildProcess() {        
         const char  *username = qobject_cast<HelperApp*>(parent())->user().toLocal8Bit();
         struct passwd *pw = getpwnam(username);
         if (setgid(pw->pw_gid) != 0) {
             qCritical() << "setgid(" << pw->pw_gid << ") failed for user: " << username;
-            exit(Auth::HELPER_OTHER_ERROR);
+            exit(-1);
         }
         if (initgroups(pw->pw_name, pw->pw_gid) != 0) {
             qCritical() << "initgroups(" << pw->pw_name << ", " << pw->pw_gid << ") failed for user: " << username;
-            exit(Auth::HELPER_OTHER_ERROR);
+            exit(-1);
         }
         if (setuid(pw->pw_uid) != 0) {
             qCritical() << "setuid(" << pw->pw_uid << ") failed for user: " << username;
-            exit(Auth::HELPER_OTHER_ERROR);
+            exit(-1);
         }
         if (chdir(pw->pw_dir) != 0) {
             qCritical() << "chdir(" << pw->pw_dir << ") failed for user: " << username;
             qCritical() << "verify directory exist and has sufficient permissions";
-            exit(Auth::HELPER_OTHER_ERROR);
+            exit(-1);
         }
 
+        //from here onwards we redirect stderr to a file, doesn't seem to work 
+        return; 
+        
+                
         //we cannot use setStandardError file as this code is run in the child process
         //we want to redirect after we setuid so that .xsession-errors is owned by the user
 
         //swap the stderr pipe of this subprcess into a file .xsession-errors
-        int fd = ::open(".xsession-errors", O_WRONLY | O_CREAT | O_TRUNC, 0600);
+        int fd = ::open(".xsession-errors-dave", O_WRONLY | O_CREAT | O_TRUNC, 0600);
         if (fd >= 0)
         {
             dup2 (fd, STDERR_FILENO);
@@ -103,32 +103,6 @@ namespace SDDM {
             ::close(fd);
         } else {
             qWarning() << "Could not redirect stdout";
-        }
-
-        QString cookie = qobject_cast<HelperApp*>(parent())->cookie();
-        if (!cookie.isEmpty()) {
-            QString file = processEnvironment().value("XAUTHORITY");
-            QString display = processEnvironment().value("DISPLAY");
-            qDebug() << "Adding cookie to" << file;
-
-            QFile file_handler(file);
-            file_handler.open(QIODevice::WriteOnly);
-            file_handler.close();
-
-            QString cmd = QString("%1 -f %2 -q").arg(mainConfig.XDisplay.XauthPath.get()).arg(file);
-
-            // execute xauth
-            FILE *fp = popen(qPrintable(cmd), "w");
-
-            // check file
-            if (!fp)
-                return;
-            fprintf(fp, "remove %s\n", qPrintable(display));
-            fprintf(fp, "add %s . %s\n", qPrintable(display), qPrintable(cookie));
-            fprintf(fp, "exit\n");
-
-            // close pipe
-            pclose(fp);
         }
     }
 }

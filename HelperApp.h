@@ -25,7 +25,6 @@
 #include <QtCore/QProcessEnvironment>
 
 namespace SDDM {
-    class Backend;
     class UserSession;
     class HelperApp : public QCoreApplication
     {
@@ -34,22 +33,13 @@ namespace SDDM {
         HelperApp(int& argc, char** argv);
         virtual ~HelperApp();
 
-        UserSession *session();
         const QString &user() const;
 
-    public slots:
-        QProcessEnvironment authenticated(const QString &user);
-        void sessionOpened(bool success);
-
-    private slots:
-        void setUp();
-        void doAuth();
-
+    private Q_SLOTS:
         void sessionFinished(int status);
 
     private:
         qint64 m_id { -1 };
-        Backend *m_backend { nullptr };
         UserSession *m_session { nullptr };
         QString m_user { };
     };
