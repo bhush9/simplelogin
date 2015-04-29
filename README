@@ -1,0 +1,11 @@
+This app goes through PAM with logind, forks into the user specified, like a login manager would do
+
+usage
+
+simplelogin --user USERNAME --exec FULLPATHTOEXEC
+
+it has been bastardised from SDDM
+
+super simple sans display display desktop manager mockup mitigating mir
+
+or sssdddmmmm for short.
