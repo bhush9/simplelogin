@@ -1,6 +1,6 @@
 /*
  * Session process wrapper
- * Copyright (C) 2014 Martin Bříza <mbriza@redhat.com>
+ * Copyright (C) 2014 Martin B????za <mbriza@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,9 @@ namespace SDDM {
     }
 
     void UserSession::setupChildProcess() {        
-        const char  *username = qobject_cast<HelperApp*>(parent())->user().toLocal8Bit();
-        struct passwd *pw = getpwnam(username);
+        QString username = qobject_cast<HelperApp*>(parent())->user();
+
+        struct passwd *pw = getpwnam(username.toLocal8Bit());
         if (setgid(pw->pw_gid) != 0) {
             qCritical() << "setgid(" << pw->pw_gid << ") failed for user: " << username;
             exit(-1);

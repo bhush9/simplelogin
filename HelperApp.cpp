@@ -58,7 +58,7 @@ namespace SDDM {
             qFatal("pass some args please");
         
         PamHandle *pamHandle = new PamHandle; //TODO fix leak
-        
+
         if (! pamHandle->start("sddm-autologin" /*PAM session*/, m_user)) //Martin check this exists
             qFatal("Could not start PAM");
         
@@ -82,7 +82,10 @@ namespace SDDM {
         qDebug() << "startng process";
         
         connect(m_session, SIGNAL(finished(int)), SLOT(sessionFinished(int)));
-        
+
+        connect(m_session, &QProcess::readyReadStandardError, m_session, [this](){qDebug() << m_session->readAllStandardError();});
+        connect(m_session, &QProcess::readyReadStandardOutput, m_session, [this](){qDebug() << m_session->readAllStandardOutput();});
+
         sessionEnv.insert(pamHandle->getEnv());
         m_session->setProcessEnvironment(sessionEnv);
         m_session->start();
