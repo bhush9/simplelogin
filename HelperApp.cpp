@@ -61,20 +61,30 @@ namespace SDDM {
 
         if (! pamHandle->start("sddm-autologin" /*PAM session*/, m_user)) //Martin check this exists
             qFatal("Could not start PAM");
-        
+
+        QProcessEnvironment env = m_session->processEnvironment();
+
+//         env.insert("DISPLAY", name());
+        env.insert("XDG_SEAT", "seat0");
+//         env.insert("XDG_SEAT_PATH", daemonApp->displayManager()->seatPath(seat()->name()));
+//         env.insert("XDG_SESSION_PATH", daemonApp->displayManager()->sessionPath(QString("Session%1").arg(daemonApp->newSessionId())));
+        env.insert("XDG_VTNR", QString::number(0));
+        env.insert("DESKTOP_SESSION", "KDE");
+        env.insert("XDG_CURRENT_DESKTOP", "KDE");
+        env.insert("XDG_SESSION_CLASS", "user");
+//         env.insert("XDG_SESSION_TYPE", m_displayServer->sessionType());
+//         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
+        pamHandle->putEnv(env);
+
+
         if (!pamHandle->authenticate())
             qFatal("Could not auth");
 
-        QProcessEnvironment sessionEnv = m_session->processEnvironment();
-        
-//         pamHandle->setItem(PAM_XDISPLAY, qPrintable(display)); //Martin maybe change these, see that page on 
-//         pamHandle->setItem(PAM_TTY, qPrintable(display));
-        
-        //DAVE - old code shoved a tonne of other stuff into the env, but was marked as "is this needed?".
-        //see SDDM backend.cpp
-        //I guess we'll find out :)
-        
-        pamHandle->putEnv(sessionEnv);
+        if (!pamHandle->acctMgmt())
+            qFatal("Could not do account management");
+
+        if (!pamHandle->setCred(PAM_ESTABLISH_CRED))
+            qFatal("Could not establish credentials");
         
         if (!pamHandle->openSession())
             qFatal("Could not open pam session");
@@ -86,8 +96,8 @@ namespace SDDM {
         connect(m_session, &QProcess::readyReadStandardError, m_session, [this](){qDebug() << m_session->readAllStandardError();});
         connect(m_session, &QProcess::readyReadStandardOutput, m_session, [this](){qDebug() << m_session->readAllStandardOutput();});
 
-        sessionEnv.insert(pamHandle->getEnv());
-        m_session->setProcessEnvironment(sessionEnv);
+        env.insert(pamHandle->getEnv());
+        m_session->setProcessEnvironment(env);
         m_session->start();
         
     }
