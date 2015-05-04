@@ -68,7 +68,7 @@ namespace SDDM {
         env.insert("XDG_SEAT", "seat0");
 //         env.insert("XDG_SEAT_PATH", daemonApp->displayManager()->seatPath(seat()->name()));
 //         env.insert("XDG_SESSION_PATH", daemonApp->displayManager()->sessionPath(QString("Session%1").arg(daemonApp->newSessionId())));
-        env.insert("XDG_VTNR", QString::number(0));
+        env.insert("XDG_VTNR", QString::number(1));
         env.insert("DESKTOP_SESSION", "KDE");
         env.insert("XDG_CURRENT_DESKTOP", "KDE");
         env.insert("XDG_SESSION_CLASS", "user");
