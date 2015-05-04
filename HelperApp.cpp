@@ -76,6 +76,9 @@ namespace SDDM {
 //         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
         pamHandle->putEnv(env);
 
+        pamHandle->setItem(PAM_TTY, QString::number(1));
+
+
 
         if (!pamHandle->authenticate())
             qFatal("Could not auth");
