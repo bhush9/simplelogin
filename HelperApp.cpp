@@ -76,9 +76,7 @@ namespace SDDM {
 //         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
         pamHandle->putEnv(env);
 
-        pamHandle->setItem(PAM_TTY, "1"); //I have a feeling this might be ":0"
-
-
+        pamHandle->setItem(PAM_TTY, "/dev/tty1");
 
         if (!pamHandle->authenticate())
             qFatal("Could not auth");
@@ -100,6 +98,7 @@ namespace SDDM {
         connect(m_session, &QProcess::readyReadStandardOutput, m_session, [this](){qDebug() << m_session->readAllStandardOutput();});
 
         env.insert(pamHandle->getEnv());
+        env.insert("TEST", "TEST2");
         m_session->setProcessEnvironment(env);
         m_session->start();
         
