@@ -72,7 +72,7 @@ namespace SDDM {
         env.insert("DESKTOP_SESSION", "KDE");
         env.insert("XDG_CURRENT_DESKTOP", "KDE");
         env.insert("XDG_SESSION_CLASS", "user");
-//         env.insert("XDG_SESSION_TYPE", m_displayServer->sessionType());
+        env.insert("XDG_SESSION_TYPE", "wayland");
 //         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
         pamHandle->putEnv(env);
 
