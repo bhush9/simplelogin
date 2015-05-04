@@ -76,7 +76,7 @@ namespace SDDM {
 //         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
         pamHandle->putEnv(env);
 
-        pamHandle->setItem(PAM_TTY, QString::number(1));
+        pamHandle->setItem(PAM_TTY, "1"); //I have a feeling this might be ":0"
 
 
 
