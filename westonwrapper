@@ -1,0 +1,16 @@
+#!/bin/sh
+loginctl show-seat seat0 > /home/phablet/login.log
+echo "=================" >> /home/phablet/login.log
+loginctl list-sessions >> /home/phablet/login.log
+echo "================" >> /home/phablet/login.log
+loginctl show-session c1 >> /home/phablet/login.log
+echo "================" >> /home/phablet/login.log
+loginctl show-session c2 >> /home/phablet/login.log
+echo "================" >> /home/phablet/login.log
+env > /home/phablet/env
+#loginctl show-session c3 >> /home/phablet/login.log
+export MESA_DEBUG=1
+export EGL_LOG_LEVEL=debug
+export LIBGL_DEBUG=verbose
+export WAYLAND_DEBUG=1
+weston --backend=fbdev-backend.so --log=/home/phablet/weston.log 

@@ -33,9 +33,12 @@ set(HELPER_SOURCES
     backend/PamHandle.cpp
 )
 
-add_executable(sddm-helper ${HELPER_SOURCES})
+add_executable(simplelogin ${HELPER_SOURCES})
 
-target_link_libraries(sddm-helper Qt5::Core ${PAM_LIBRARIES})
+target_link_libraries(simplelogin Qt5::Core ${PAM_LIBRARIES})
 
 
-# install(TARGETS sddm-helper RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
+install(TARGETS simplelogin RUNTIME DESTINATION /usr/bin)
+install(FILES upstart/simplelogin.conf DESTINATION /etc/init)
+install(FILES westonwrapper DESTINATION /usr/bin)
+
