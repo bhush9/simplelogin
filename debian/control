@@ -1,0 +1,20 @@
+Source: simplelogin
+Section: kde
+Priority: optional
+Maintainer: Boudewijn Rempt <boud@kde.org>
+Build-Depends: debhelper (>= 8.0~),
+     	       cmake (>= 2.6.3),
+               pkg-config,
+               pkg-kde-tools (>= 0.9),
+               qt5-default,
+	           qtbase5-private-dev,
+               libpam0g-dev
+Standards-Version: 3.9.1
+
+Package: simplelogin
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends},
+           libpam-runtime,
+           libqt5core5
+Description: Simple Login
+ This package contains a simple way to login into plasma-phone
