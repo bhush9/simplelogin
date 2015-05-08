@@ -98,7 +98,6 @@ namespace SDDM {
         connect(m_session, &QProcess::readyReadStandardOutput, m_session, [this](){qDebug() << m_session->readAllStandardOutput();});
 
         env.insert(pamHandle->getEnv());
-        env.insert("TEST", "TEST2");
         m_session->setProcessEnvironment(env);
         m_session->start();
         
