@@ -15,6 +15,6 @@ Package: simplelogin
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
            libpam-runtime,
-           libqt5core5
+           libqt5core5a
 Description: Simple Login
  This package contains a simple way to login into plasma-phone
