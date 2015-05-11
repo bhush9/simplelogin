@@ -1,3 +1,4 @@
 #!/bin/sh
 touch /tmp/simplelogin_starting
+`dbus-launch --sh-syntax`
 kwin_wayland --hwcomposer --xwayland --libinput 2> /tmp/kwin_logs
