@@ -31,6 +31,9 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+#include <pwd.h>
+
+
 namespace SDDM {
     HelperApp::HelperApp(int& argc, char** argv)
             : QCoreApplication(argc, argv)
@@ -74,6 +77,17 @@ namespace SDDM {
         env.insert("XDG_SESSION_CLASS", "user");
         env.insert("XDG_SESSION_TYPE", "wayland");
 //         env.insert("XDG_SESSION_DESKTOP", xdgSessionName);
+
+        struct passwd *pw;
+        pw = getpwnam(qPrintable(m_user));
+        if (pw) {
+            env.insert("HOME", pw->pw_dir);
+            env.insert("PWD", pw->pw_dir);
+            env.insert("SHELL", pw->pw_shell);
+            env.insert("USER", pw->pw_name);
+            env.insert("LOGNAME", pw->pw_name);
+        }
+
         pamHandle->putEnv(env);
 
         pamHandle->setItem(PAM_TTY, "/dev/tty1");
