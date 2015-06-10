@@ -118,7 +118,9 @@ namespace SDDM {
     }
 
     void HelperApp::sessionFinished(int status) {
-        exit(status);
+        //leave open so that simplelogin stays open and it's easier to debug
+        //long term; probably restart kwin at least once
+//         exit(status);
     }
     
     const QString& HelperApp::user() const
