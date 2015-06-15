@@ -3,4 +3,4 @@ export $(dbus-launch)
 export  QML2_IMPORT_PATH=/usr/lib/arm-linux-gnueabihf/qt5/qml/:$QML2_IMPORT_PATH
 
 touch /tmp/simplelogin_starting
-kwin_wayland --hwcomposer --xwayland --libinput plasma-phone 2> /tmp/kwin_logs
+kwin_wayland --hwcomposer --xwayland --libinput --inputmethod maliit-server plasma-phone 2> /tmp/kwin_logs
