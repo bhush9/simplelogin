@@ -1,6 +1,18 @@
 #!/bin/sh
 export $(dbus-launch)
+export QT_QPA_PLATFORM=wayland
+export QT_QPA_PLATFORMTHEME=KDE
+export QT_WAYLAND_DISABLE_WINDOWDECORATION=1
+export QT_IM_MODULE=maliit
+export XDG_CURRENT_DESKTOP=KDE
+export KSCREEN_BACKEND=QScreen
+
+export KDE_FULL_SESSION=1
+export KDE_SESSION_VERSION=5
+export PLASMA_PLATFORM=phone
+export QT_QUICK_CONTROLS_STYLE=Plasma
+
 export  QML2_IMPORT_PATH=/usr/lib/arm-linux-gnueabihf/qt5/qml/:$QML2_IMPORT_PATH
 
 touch /tmp/simplelogin_starting
-kwin_wayland --hwcomposer --xwayland --libinput --inputmethod maliit-server plasma-phone 2> /tmp/kwin_logs
+kwin_wayland --hwcomposer --xwayland --libinput --inputmethod maliit-server "kded5 --platform xcb" "kglobalaccel5 --platform xcb" plasma-phone 2> /tmp/kwin_logs
