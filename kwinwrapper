@@ -15,4 +15,4 @@ export QT_QUICK_CONTROLS_STYLE=Plasma
 export  QML2_IMPORT_PATH=/usr/lib/arm-linux-gnueabihf/qt5/qml/:$QML2_IMPORT_PATH
 
 touch /tmp/simplelogin_starting
-kwin_wayland --hwcomposer --xwayland --libinput --inputmethod maliit-server "kded5 --platform xcb" "kglobalaccel5 --platform xcb" plasma-phone 2> /tmp/kwin_logs
+kwin_wayland --xwayland --libinput --inputmethod maliit-server "kded5 --platform xcb" "kglobalaccel5 --platform xcb" plasma-phone 2> /tmp/kwin_logs
