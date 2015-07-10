@@ -8,8 +8,5 @@ if(SYSTEMD_FOUND)
         string(REGEX REPLACE "[ \t\n]+" "" SYSTEMD_SYSTEM_UNIT_DIR ${SYSTEMD_SYSTEM_UNIT_DIR})
     endif()
 
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/simplelogin.service.in"
-                  "${CMAKE_CURRENT_BINARY_DIR}/simplelogin.service")
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/simplelogin.service"
-            DESTINATION "${SYSTEMD_SYSTEM_UNIT_DIR}")
+    install(FILES "simplelogin.service" DESTINATION "${SYSTEMD_SYSTEM_UNIT_DIR}")
 endif()

@@ -3,7 +3,7 @@ Description=Simple Login Manager
 After=systemd-user-sessions.service getty@tty1.service plymouth-quit.service
 
 [Service]
-ExecStart=@CMAKE_INSTALL_FULL_BINDIR@/simplelogin --user phablet --exec kwinwrapper
+ExecStart=/usr/bin/simplelogin --user phablet --exec kwinwrapper
 ExecStartPost=sleep 5; clear > /dev/tty7
 Restart=always
 
