@@ -32,6 +32,10 @@
 #include <sys/socket.h>
 
 #include <pwd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+#include <linux/vt.h>
+#include <linux/kd.h>
 
 
 namespace SDDM {
@@ -41,6 +45,11 @@ namespace SDDM {
     {        
         QStringList args = QCoreApplication::arguments();
         int pos;
+
+            int fd = open("/dev/tty0", O_RDWR | O_NOCTTY);
+            ioctl(fd, VT_RELDISP, VT_ACKACQ);
+            close(fd);
+
         
 
         if ((pos = args.indexOf("--exec")) >= 0) {
