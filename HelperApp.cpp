@@ -34,9 +34,8 @@
 #include <pwd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
-#include <linux/vt.h>
-#include <linux/kd.h>
 
+#include "VirtualTerminal.h"
 
 namespace SDDM {
     HelperApp::HelperApp(int& argc, char** argv)
@@ -46,10 +45,8 @@ namespace SDDM {
         QStringList args = QCoreApplication::arguments();
         int pos;
 
-            int fd = open("/dev/tty0", O_RDWR | O_NOCTTY);
-            ioctl(fd, VT_RELDISP, VT_ACKACQ);
-            close(fd);
-
+        int vt = SDDM::VirtualTerminal::setUpNewVt();
+        SDDM::VirtualTerminal::jumpToVt(vt);
         
 
         if ((pos = args.indexOf("--exec")) >= 0) {
@@ -80,7 +77,7 @@ namespace SDDM {
         env.insert("XDG_SEAT", "seat0");
 //         env.insert("XDG_SEAT_PATH", daemonApp->displayManager()->seatPath(seat()->name()));
 //         env.insert("XDG_SESSION_PATH", daemonApp->displayManager()->sessionPath(QString("Session%1").arg(daemonApp->newSessionId())));
-        env.insert("XDG_VTNR", QString::number(0));
+        env.insert("XDG_VTNR", QString::number(vt));
         env.insert("DESKTOP_SESSION", "KDE");
         env.insert("XDG_CURRENT_DESKTOP", "KDE");
         env.insert("XDG_SESSION_CLASS", "user");
@@ -99,7 +96,7 @@ namespace SDDM {
 
         pamHandle->putEnv(env);
 
-        pamHandle->setItem(PAM_TTY, "/dev/tty1");
+        pamHandle->setItem(PAM_TTY, qPrintable(QString("/dev/tty%1").arg(vt)));
 
         if (!pamHandle->authenticate())
             qFatal("Could not auth");

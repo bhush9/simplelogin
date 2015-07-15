@@ -31,6 +31,7 @@ set(HELPER_SOURCES
     HelperApp.cpp
     UserSession.cpp
     backend/PamHandle.cpp
+    VirtualTerminal.cpp
 )
 
 add_executable(simplelogin ${HELPER_SOURCES})
