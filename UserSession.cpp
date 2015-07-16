@@ -24,6 +24,7 @@
 #include <QDebug>
 
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -59,6 +60,39 @@ namespace SDDM {
 
     void UserSession::setupChildProcess() {        
         QString username = qobject_cast<HelperApp*>(parent())->user();
+
+
+            // open VT and get the fd
+            QString ttyString = QString("/dev/tty%1").arg(processEnvironment().value("XDG_VTNR"));
+            int vtFd = ::open(qPrintable(ttyString), O_RDWR | O_NOCTTY);
+
+            // when this is true we'll take control of the tty
+            bool takeControl = false;
+
+            if (vtFd > 0) {
+                dup2(vtFd, STDIN_FILENO);
+                ::close(vtFd);
+                takeControl = true;
+            } else {
+                int stdinFd = ::open("/dev/null", O_RDWR);
+                dup2(stdinFd, STDIN_FILENO);
+                ::close(stdinFd);
+            }
+
+            // set this process as session leader
+            if (setsid() < 0) {
+                qCritical("Failed to set pid %lld as leader of the new session and process group: %s",
+                          QCoreApplication::applicationPid(), strerror(errno));
+                exit(-1);
+            }
+
+            // take control of the tty
+            if (takeControl) {
+                if (ioctl(STDIN_FILENO, TIOCSCTTY) < 0) {
+                    qCritical("Failed to take control of the tty: %s", strerror(errno));
+            exit(-1);
+                }
+            }
 
         struct passwd *pw = getpwnam(username.toLocal8Bit());
         if (setgid(pw->pw_gid) != 0) {
