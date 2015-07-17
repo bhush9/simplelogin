@@ -42,6 +42,6 @@ target_link_libraries(simplelogin Qt5::Core ${PAM_LIBRARIES})
 install(TARGETS simplelogin RUNTIME DESTINATION /usr/bin)
 install(FILES upstart/simplelogin.conf DESTINATION /etc/init)
 add_subdirectory(systemd)
-install(FILES kwinwrapper DESTINATION /usr/bin)
+install(PROGRAMS kwinwrapper DESTINATION /usr/bin)
 install(FILES sddm-autologin DESTINATION /etc/pam.d)
 
