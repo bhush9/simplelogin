@@ -5,7 +5,6 @@ Conflicts=getty@tty1.service
 
 [Service]
 ExecStart=/usr/bin/simplelogin --user phablet --exec kwinwrapper
-ExecStartPost=sleep 5; clear > /dev/tty7
 Restart=always
 
 [Install]
