@@ -12,6 +12,9 @@ export KDE_SESSION_VERSION=5
 export PLASMA_PLATFORM=phone
 export QT_QUICK_CONTROLS_STYLE=Plasma
 
+# work around to fix : https://bugs.launchpad.net/ubuntu/+source/mesa/+bug/1507584
+export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/libhybris1-egl:$LD_LIBRARY_PATH
+
 if [ "`cat /sys/devices/virtual/dmi/id/board_name`" = "EXOPG06411" ]; then
   # The ExoPC Slate from Akademy in Berlin only supports OpenGL 1.4, to get it to
   # work with KWin (which requires 2.0), fake 2.0 support.
