@@ -12,7 +12,7 @@ export PLASMA_PLATFORM=phone
 export QT_QUICK_CONTROLS_STYLE=Plasma
 
 # work around to fix : https://bugs.launchpad.net/ubuntu/+source/mesa/+bug/1507584
-export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/libhybris1-egl:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/libhybris-egl:$LD_LIBRARY_PATH
 
 if [ "`cat /sys/devices/virtual/dmi/id/board_name`" = "EXOPG06411" ]; then
   # The ExoPC Slate from Akademy in Berlin only supports OpenGL 1.4, to get it to
