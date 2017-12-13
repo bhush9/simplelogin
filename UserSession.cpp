@@ -90,7 +90,6 @@ namespace SDDM {
             if (takeControl) {
                 if (ioctl(STDIN_FILENO, TIOCSCTTY) < 0) {
                     qCritical("Failed to take control of the tty: %s", strerror(errno));
-            exit(-1);
                 }
             }
 
