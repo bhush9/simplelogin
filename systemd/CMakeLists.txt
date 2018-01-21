@@ -9,5 +9,4 @@ if(SYSTEMD_FOUND)
     endif()
 
     install(FILES "simplelogin.service" DESTINATION "${SYSTEMD_SYSTEM_UNIT_DIR}")
-    install(FILES "simplelogin@.service" DESTINATION "${SYSTEMD_SYSTEM_UNIT_DIR}")
 endif()
