@@ -1,4 +1,7 @@
 #!/bin/sh
+
+[ -f /etc/profile ] && . /etc/profile
+
 export $(dbus-launch)
 export QT_QPA_PLATFORM=wayland
 export QT_QPA_PLATFORMTHEME=KDE
