@@ -49,7 +49,7 @@ namespace SDDM {
         * ctor
         * \param parent parent backend
         */
-        explicit PamHandle(PamBackend *parent = 0);
+        explicit PamHandle(PamBackend *parent = nullptr);
 
         virtual ~PamHandle();
 

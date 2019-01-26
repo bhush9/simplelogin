@@ -38,7 +38,7 @@ namespace SDDM {
         QProcessEnvironment env;
         // get pam environment
         char **envlist = pam_getenvlist(m_handle);
-        if (envlist == NULL) {
+        if (envlist == nullptr) {
             qWarning() << "[PAM] getEnv: Returned NULL";
             return env;
         }
@@ -140,7 +140,7 @@ namespace SDDM {
 
     bool PamHandle::start(const QString &service, const QString &user) {
         if (user.isEmpty())
-            m_result = pam_start(qPrintable(service), NULL, &m_conv, &m_handle);
+            m_result = pam_start(qPrintable(service), nullptr, &m_conv, &m_handle);
         else
             m_result = pam_start(qPrintable(service), qPrintable(user), &m_conv, &m_handle);
         if (m_result != PAM_SUCCESS) {
@@ -164,7 +164,7 @@ namespace SDDM {
         else {
             qDebug() << "[PAM] Ended.";
         }
-        m_handle = NULL;
+        m_handle = nullptr;
         return true;
     }
 
