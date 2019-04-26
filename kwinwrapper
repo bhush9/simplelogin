@@ -21,4 +21,4 @@ export QT_QUICK_CONTROLS_MOBILE=true
 export LD_LIBRARY_PATH=/usr/lib/arm-linux-gnueabihf/libhybris-egl:$LD_LIBRARY_PATH
 
 touch /tmp/simplelogin_starting
-kwin_wayland --xwayland --libinput --inputmethod maliit-server plasma-phone
+kwin_wayland --xwayland --libinput plasma-phone
